@@ -27,14 +27,14 @@ public class FrmDashboard extends JFrame {
         btnVehiculos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //new FrmVehiculos().setVisible(true);
+                new FrmVehiculos().setVisible(true);
             }
         });
 
         btnOrdenes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //new FrmOrdenes().setVisible(true);
+                new FrmOrdenes().setVisible(true);
             }
         });
 

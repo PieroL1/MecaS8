@@ -4,23 +4,25 @@ import modelo.Cliente;
 import presentador.ClientePresentador;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class FrmClientes extends JFrame {
     private ClientePresentador presentador;
     private JTextField txtNombre, txtDireccion, txtTelefono, txtCorreo;
-    private JTextArea txtClientes;
+    private JTable tablaClientes;
+    private DefaultTableModel modeloTabla;
     private JButton btnAgregar, btnEditar, btnEliminar, btnCargar;
-    private JList<String> listaClientes;
-    private DefaultListModel<String> modeloLista;
     
     public FrmClientes() {
         presentador = new ClientePresentador();
         setTitle("Gestión de Clientes");
-        setSize(500, 400);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -44,10 +46,10 @@ public class FrmClientes extends JFrame {
         
         add(panelFormulario, BorderLayout.NORTH);
         
-        // Lista de clientes
-        modeloLista = new DefaultListModel<>();
-        listaClientes = new JList<>(modeloLista);
-        add(new JScrollPane(listaClientes), BorderLayout.CENTER);
+        // Tabla de clientes
+        modeloTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Dirección", "Teléfono", "Correo"}, 0);
+        tablaClientes = new JTable(modeloTabla);
+        add(new JScrollPane(tablaClientes), BorderLayout.CENTER);
 
         // Panel de botones
         JPanel panelBotones = new JPanel(new GridLayout(1, 4));
@@ -64,31 +66,21 @@ public class FrmClientes extends JFrame {
         add(panelBotones, BorderLayout.SOUTH);
         
         // Listeners de botones
-        btnAgregar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                agregarCliente();
-            }
-        });
-
-        btnEditar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editarCliente();
-            }
-        });
-
-        btnEliminar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                eliminarCliente();
-            }
-        });
-
-        btnCargar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cargarClientes();
+        btnAgregar.addActionListener(e -> agregarCliente());
+        btnEditar.addActionListener(e -> editarCliente());
+        btnEliminar.addActionListener(e -> eliminarCliente());
+        btnCargar.addActionListener(e -> cargarClientes());
+        
+        // Evento de selección en la tabla
+        tablaClientes.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int fila = tablaClientes.getSelectedRow();
+                if (fila != -1) {
+                    txtNombre.setText(modeloTabla.getValueAt(fila, 1).toString());
+                    txtDireccion.setText(modeloTabla.getValueAt(fila, 2).toString());
+                    txtTelefono.setText(modeloTabla.getValueAt(fila, 3).toString());
+                    txtCorreo.setText(modeloTabla.getValueAt(fila, 4).toString());
+                }
             }
         });
 
@@ -110,14 +102,13 @@ public class FrmClientes extends JFrame {
     }
 
     private void editarCliente() {
-        int index = listaClientes.getSelectedIndex();
-        if (index == -1) {
+        int fila = tablaClientes.getSelectedRow();
+        if (fila == -1) {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente para editar");
             return;
         }
         
-        String[] datos = modeloLista.get(index).split(" - ");
-        int id = Integer.parseInt(datos[0]);
+        int id = Integer.parseInt(modeloTabla.getValueAt(fila, 0).toString());
         String nombre = txtNombre.getText();
         String direccion = txtDireccion.getText();
         String telefono = txtTelefono.getText();
@@ -132,14 +123,13 @@ public class FrmClientes extends JFrame {
     }
 
     private void eliminarCliente() {
-        int index = listaClientes.getSelectedIndex();
-        if (index == -1) {
+        int fila = tablaClientes.getSelectedRow();
+        if (fila == -1) {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente para eliminar");
             return;
         }
         
-        String[] datos = modeloLista.get(index).split(" - ");
-        int id = Integer.parseInt(datos[0]);
+        int id = Integer.parseInt(modeloTabla.getValueAt(fila, 0).toString());
         
         if (presentador.eliminarCliente(id)) {
             JOptionPane.showMessageDialog(this, "Cliente eliminado exitosamente");
@@ -150,10 +140,10 @@ public class FrmClientes extends JFrame {
     }
 
     private void cargarClientes() {
-        modeloLista.clear();
+        modeloTabla.setRowCount(0);
         List<Cliente> clientes = presentador.obtenerClientes();
         for (Cliente c : clientes) {
-            modeloLista.addElement(c.getId() + " - " + c.getNombre());
+            modeloTabla.addRow(new Object[]{c.getId(), c.getNombre(), c.getDireccion(), c.getTelefono(), c.getCorreo()});
         }
     }
 }

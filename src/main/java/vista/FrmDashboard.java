@@ -20,7 +20,7 @@ public class FrmDashboard extends JFrame {
         btnClientes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //new FrmClientes().setVisible(true);
+                new FrmClientes().setVisible(true);
             }
         });
 
@@ -53,7 +53,4 @@ public class FrmDashboard extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    public static void main(String[] args) {
-        new FrmDashboard().setVisible(true);
-    }
 }

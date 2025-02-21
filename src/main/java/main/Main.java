@@ -1,10 +1,11 @@
 package main;
 
-import vista.FrmDashboard;
+//import vista.FrmDashboard;
+import vista.FrmLogin;
 
 public class Main {
     public static void main(String[] args) {
-        FrmDashboard dashboard = new FrmDashboard();
+        FrmLogin dashboard = new FrmLogin();
         dashboard.setVisible(true);
     }
 }

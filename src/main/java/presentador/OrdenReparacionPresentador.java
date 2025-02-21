@@ -37,4 +37,14 @@ public class OrdenReparacionPresentador {
     public List<OrdenReparacion> obtenerOrdenesPorVehiculo(int vehiculoId) {
         return OrdenReparacion.obtenerHistorialPorVehiculo(vehiculoId);
     }
+    
+    public boolean asignarPieza(int ordenId, int piezaId, int cantidad) {
+        return OrdenReparacion.asignarPieza(ordenId, piezaId, cantidad);
+    }
+    
+    public List<OrdenReparacion> obtenerTodasOrdenes() {
+        return OrdenReparacion.obtenerTodas();
+    }
+
+    
 }

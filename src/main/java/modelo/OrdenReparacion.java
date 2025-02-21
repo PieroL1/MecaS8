@@ -137,4 +137,46 @@ public class OrdenReparacion {
         }
         return null;
     }
+    
+    
+    public static boolean asignarPieza(int ordenId, int piezaId, int cantidad) {
+        String sql = "INSERT INTO detalle_piezas (orden_id, pieza_id, cantidad) VALUES (?, ?, ?)";
+        try (Connection con = Database.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, ordenId);
+            ps.setInt(2, piezaId);
+            ps.setInt(3, cantidad);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al asignar pieza a la orden: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static List<OrdenReparacion> obtenerTodas() {
+        List<OrdenReparacion> ordenes = new ArrayList<>();
+        String sql = "SELECT * FROM ordenes_reparacion";
+
+        try (Connection con = Database.conectar();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ordenes.add(new OrdenReparacion(
+                    rs.getInt("id"),
+                    rs.getInt("vehiculo_id"),
+                    rs.getInt("usuario_id"),
+                    rs.getString("estado"),
+                    rs.getString("fecha_ingreso"),
+                    rs.getString("fecha_entrega"),
+                    rs.getDouble("total")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener todas las órdenes: " + e.getMessage());
+        }
+        return ordenes;
+    }
+
+    
 }

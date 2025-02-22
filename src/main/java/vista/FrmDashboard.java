@@ -16,7 +16,9 @@ public class FrmDashboard extends JFrame {
         JButton btnVehiculos = new JButton("Gestión de Vehículos");
         JButton btnOrdenes = new JButton("Órdenes de Reparación");
         JButton btnFacturas = new JButton("Facturación");
-
+        JButton btnInventario = new JButton("Inventario de Piezas");
+        JButton btnInformes = new JButton("Reportes e Informes");
+        
         btnClientes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -44,11 +46,28 @@ public class FrmDashboard extends JFrame {
                 new FrmFacturas().setVisible(true);
             }
         });
-
+        
+        btnInventario.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FrmInventario().setVisible(true);
+            }
+        });
+        
+        btnInformes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FrmInformes().setVisible(true);
+            }
+        });
+        
         add(btnClientes);
         add(btnVehiculos);
         add(btnOrdenes);
         add(btnFacturas);
+        add(btnInventario);
+        add(btnInventario);
+        add(btnInformes);
 
         setLocationRelativeTo(null);
     }

@@ -45,4 +45,63 @@ public class Pieza {
         }
         return piezas;
     }
+    
+    // Métodos para manejar la base de datos
+    public static Pieza obtenerPiezaPorId(int id) {
+        Connection con = Database.conectar();
+        Pieza pieza = null;
+        try {
+            String sql = "SELECT * FROM piezas WHERE id = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                pieza = new Pieza(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getDouble("precio"),
+                    rs.getInt("stock")
+                );
+            }
+            con.close();
+        } catch (SQLException e) {
+            System.out.println("Error al obtener pieza: " + e.getMessage());
+        }
+        return pieza;
+    }
+
+    public static boolean actualizarStock(int id, int cantidad) {
+        Connection con = Database.conectar();
+        try {
+            String sql = "UPDATE piezas SET stock = ? WHERE id = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, cantidad);
+            stmt.setInt(2, id);
+            int rowsUpdated = stmt.executeUpdate();
+            con.close();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar stock: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public static boolean registrarPieza(Pieza pieza) {
+        Connection con = Database.conectar();
+        try {
+            String sql = "INSERT INTO piezas (nombre, precio, stock) VALUES (?, ?, ?)";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, pieza.getNombre());
+            stmt.setDouble(2, pieza.getPrecio());
+            stmt.setInt(3, pieza.getStock());
+            int rowsInserted = stmt.executeUpdate();
+            con.close();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al registrar pieza: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 }

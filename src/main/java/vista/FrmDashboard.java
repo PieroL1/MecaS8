@@ -41,7 +41,7 @@ public class FrmDashboard extends JFrame {
         btnFacturas.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //new FrmFacturas().setVisible(true);
+                new FrmFacturas().setVisible(true);
             }
         });
 

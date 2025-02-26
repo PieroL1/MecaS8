@@ -16,46 +16,60 @@ public class FrmInformes extends JFrame {
 
     public FrmInformes() {
         setTitle("Reportes e Informes");
-        setSize(800, 500);
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
-        
+
         presentador = new InformesPresentador();
-        
+
         // Panel de botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        
+        JPanel panelBotones = new JPanel(new GridLayout(3, 1, 10, 10));
+        panelBotones.setBorder(BorderFactory.createTitledBorder("Opciones"));
+
         btnIngresosMensuales = new JButton("Ingresos Mensuales");
-        btnIngresosMensuales.setFont(new Font("Arial", Font.BOLD, 14));
+        btnIngresosMensuales.setFont(new Font("Arial", Font.BOLD, 16));
+        btnIngresosMensuales.setBackground(new Color(255, 99, 71));
+        btnIngresosMensuales.setForeground(Color.WHITE);
         btnIngresosMensuales.addActionListener(e -> mostrarIngresosMensuales());
-        
+
         btnVehiculosReparacion = new JButton("Vehículos en Reparación");
-        btnVehiculosReparacion.setFont(new Font("Arial", Font.BOLD, 14));
+        btnVehiculosReparacion.setFont(new Font("Arial", Font.BOLD, 16));
+        btnVehiculosReparacion.setBackground(new Color(60, 179, 113));
+        btnVehiculosReparacion.setForeground(Color.WHITE);
         btnVehiculosReparacion.addActionListener(e -> mostrarVehiculosEnReparacion());
-        
+
         btnHistorialServicios = new JButton("Historial de Servicios por Cliente");
-        btnHistorialServicios.setFont(new Font("Arial", Font.BOLD, 14));
+        btnHistorialServicios.setFont(new Font("Arial", Font.BOLD, 16));
+        btnHistorialServicios.setBackground(new Color(100, 149, 237));
+        btnHistorialServicios.setForeground(Color.WHITE);
         btnHistorialServicios.addActionListener(e -> mostrarHistorialServicios());
-        
+
         panelBotones.add(btnIngresosMensuales);
         panelBotones.add(btnVehiculosReparacion);
         panelBotones.add(btnHistorialServicios);
-        
+
         // Tabla de informes
         tablaInformes = new JTable();
-        tablaInformes.setFont(new Font("Arial", Font.PLAIN, 14));
-        tablaInformes.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        tablaInformes.setRowHeight(25);
+        tablaInformes.setFont(new Font("Arial", Font.PLAIN, 16));
+        tablaInformes.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        tablaInformes.setRowHeight(30);
         tablaInformes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         JScrollPane scrollPane = new JScrollPane(tablaInformes);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        
+
         // Añadir componentes al frame
-        add(new JLabel("  Reportes e Informes - Taller Mecánico", JLabel.CENTER), BorderLayout.NORTH);
+        JLabel lblTitulo = new JLabel("Reportes e Informes - Taller Mecánico", JLabel.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
+        lblTitulo.setOpaque(true);
+        lblTitulo.setBackground(new Color(0, 128, 128));
+        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        add(lblTitulo, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        add(panelBotones, BorderLayout.SOUTH);
-        
+        add(panelBotones, BorderLayout.EAST);
+
         setLocationRelativeTo(null);
     }
 
@@ -84,7 +98,7 @@ public class FrmInformes extends JFrame {
             String mes = (String) mesComboBox.getSelectedItem();
             String anio = (String) anioComboBox.getSelectedItem();
             double ingresos = presentador.calcularIngresosMensuales(mes, anio);
-            
+
             JOptionPane.showMessageDialog(this, 
                 "Ingresos del mes de " + mes + " del año " + anio + ": S/ " + String.format("%.2f", ingresos),
                 "Ingresos Mensuales", 
@@ -97,7 +111,7 @@ public class FrmInformes extends JFrame {
      */
     private void mostrarVehiculosEnReparacion() {
         List<OrdenReparacion> ordenes = presentador.obtenerVehiculosEnReparacion();
-        
+
         String[] columnas = {"ID", "Vehículo ID", "Estado", "Fecha Ingreso", "Fecha Entrega", "Total (S/)"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -105,7 +119,7 @@ public class FrmInformes extends JFrame {
                 return false; // Hacer la tabla no editable
             }
         };
-        
+
         for (OrdenReparacion o : ordenes) {
             Object[] fila = {
                 o.getId(),
@@ -117,9 +131,9 @@ public class FrmInformes extends JFrame {
             };
             modelo.addRow(fila);
         }
-        
+
         tablaInformes.setModel(modelo);
-        
+
         // Ajustar ancho de columnas
         tablaInformes.getColumnModel().getColumn(0).setPreferredWidth(50);
         tablaInformes.getColumnModel().getColumn(1).setPreferredWidth(100);
@@ -137,12 +151,12 @@ public class FrmInformes extends JFrame {
             "Ingrese el ID del cliente:", 
             "Historial de Servicios por Cliente", 
             JOptionPane.QUESTION_MESSAGE);
-        
+
         if (clienteIdInput != null && !clienteIdInput.trim().isEmpty()) {
             try {
                 int clienteId = Integer.parseInt(clienteIdInput);
                 List<OrdenReparacion> historial = presentador.obtenerHistorialServiciosPorCliente(clienteId);
-                
+
                 String[] columnas = {"ID", "Vehículo ID", "Estado", "Fecha Ingreso", "Fecha Entrega", "Total (S/)"};
                 DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
                     @Override
@@ -150,7 +164,7 @@ public class FrmInformes extends JFrame {
                         return false; // Hacer la tabla no editable
                     }
                 };
-                
+
                 for (OrdenReparacion o : historial) {
                     Object[] fila = {
                         o.getId(),
@@ -162,9 +176,9 @@ public class FrmInformes extends JFrame {
                     };
                     modelo.addRow(fila);
                 }
-                
+
                 tablaInformes.setModel(modelo);
-                
+
                 // Ajustar ancho de columnas
                 tablaInformes.getColumnModel().getColumn(0).setPreferredWidth(50);
                 tablaInformes.getColumnModel().getColumn(1).setPreferredWidth(100);

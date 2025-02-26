@@ -15,44 +15,56 @@ public class FrmInventario extends JFrame {
 
     public FrmInventario() {
         setTitle("Inventario de Piezas");
-        setSize(800, 500);
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
-        
+
         presentador = new InventarioPresentador();
-        
+
         // Panel de botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        
+        JPanel panelBotones = new JPanel(new GridLayout(2, 1, 15, 10));
+        panelBotones.setBorder(BorderFactory.createTitledBorder("Acciones"));
+
         btnActualizarStock = new JButton("Actualizar Stock");
-        btnActualizarStock.setFont(new Font("Arial", Font.BOLD, 14));
+        btnActualizarStock.setFont(new Font("Arial", Font.BOLD, 16));
+        btnActualizarStock.setBackground(new Color(30, 144, 255));
+        btnActualizarStock.setForeground(Color.WHITE);
         btnActualizarStock.addActionListener(e -> actualizarStock());
-        
+
         btnRegistrarPieza = new JButton("Registrar Pieza");
-        btnRegistrarPieza.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRegistrarPieza.setFont(new Font("Arial", Font.BOLD, 16));
+        btnRegistrarPieza.setBackground(new Color(34, 139, 34));
+        btnRegistrarPieza.setForeground(Color.WHITE);
         btnRegistrarPieza.addActionListener(e -> registrarPieza());
-        
+
         panelBotones.add(btnActualizarStock);
         panelBotones.add(btnRegistrarPieza);
-        
+
         // Tabla de piezas
         tablaPiezas = new JTable();
-        tablaPiezas.setFont(new Font("Arial", Font.PLAIN, 14));
-        tablaPiezas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        tablaPiezas.setRowHeight(25);
+        tablaPiezas.setFont(new Font("Arial", Font.PLAIN, 16));
+        tablaPiezas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        tablaPiezas.setRowHeight(30);
         tablaPiezas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         // Inicializar la tabla
         cargarPiezas();
-        
+
         JScrollPane scrollPane = new JScrollPane(tablaPiezas);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        
+
         // Añadir componentes al frame
-        add(new JLabel("  Inventario de Piezas - Taller Mecánico", JLabel.CENTER), BorderLayout.NORTH);
+        JLabel lblTitulo = new JLabel("Inventario de Piezas - Taller Mecánico", JLabel.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
+        lblTitulo.setOpaque(true);
+        lblTitulo.setBackground(new Color(70, 130, 180));
+        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        add(lblTitulo, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        add(panelBotones, BorderLayout.SOUTH);
-        
+        add(panelBotones, BorderLayout.WEST);
+
         setLocationRelativeTo(null);
     }
 
@@ -61,7 +73,7 @@ public class FrmInventario extends JFrame {
      */
     private void cargarPiezas() {
         List<Pieza> piezas = presentador.obtenerPiezas();
-        
+
         String[] columnas = {"ID", "Nombre", "Precio (S/)", "Stock"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -69,7 +81,7 @@ public class FrmInventario extends JFrame {
                 return false; // Hacer la tabla no editable
             }
         };
-        
+
         for (Pieza p : piezas) {
             Object[] fila = {
                 p.getId(),
@@ -79,9 +91,9 @@ public class FrmInventario extends JFrame {
             };
             modelo.addRow(fila);
         }
-        
+
         tablaPiezas.setModel(modelo);
-        
+
         // Ajustar ancho de columnas
         tablaPiezas.getColumnModel().getColumn(0).setPreferredWidth(50);
         tablaPiezas.getColumnModel().getColumn(1).setPreferredWidth(200);
@@ -94,7 +106,7 @@ public class FrmInventario extends JFrame {
      */
     private void actualizarStock() {
         int filaSeleccionada = tablaPiezas.getSelectedRow();
-        
+
         if (filaSeleccionada == -1) {
             JOptionPane.showMessageDialog(this, 
                 "Por favor, seleccione una pieza para actualizar el stock.",
@@ -102,15 +114,15 @@ public class FrmInventario extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         int piezaId = (int) tablaPiezas.getValueAt(filaSeleccionada, 0);
         String nombrePieza = (String) tablaPiezas.getValueAt(filaSeleccionada, 1);
-        
+
         String input = JOptionPane.showInputDialog(this, 
             "Ingrese la nueva cantidad de stock para " + nombrePieza + ":", 
             "Actualizar Stock", 
             JOptionPane.QUESTION_MESSAGE);
-        
+
         if (input != null && !input.trim().isEmpty()) {
             try {
                 int cantidad = Integer.parseInt(input);
@@ -142,26 +154,26 @@ public class FrmInventario extends JFrame {
         JTextField nombreField = new JTextField();
         JTextField precioField = new JTextField();
         JTextField stockField = new JTextField();
-        
+
         Object[] message = {
             "Nombre:", nombreField,
             "Precio (S/):", precioField,
             "Stock:", stockField
         };
-        
+
         int option = JOptionPane.showConfirmDialog(this, message, "Registrar Pieza", JOptionPane.OK_CANCEL_OPTION);
-        
+
         if (option == JOptionPane.OK_OPTION) {
             String nombre = nombreField.getText().trim();
             String precioStr = precioField.getText().trim();
             String stockStr = stockField.getText().trim();
-            
+
             if (!nombre.isEmpty() && !precioStr.isEmpty() && !stockStr.isEmpty()) {
                 try {
                     double precio = Double.parseDouble(precioStr);
                     int stock = Integer.parseInt(stockStr);
                     Pieza nuevaPieza = new Pieza(0, nombre, precio, stock);
-                    
+
                     if (presentador.registrarPieza(nuevaPieza)) {
                         JOptionPane.showMessageDialog(this, 
                             "Pieza registrada correctamente",
